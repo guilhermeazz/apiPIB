@@ -39,6 +39,6 @@ app.get('/', (req, res) => {
 
 // Inicia o servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log(`Documentação disponível em http://localhost:${PORT}/api-docs`);
+  console.log(`Servidor rodando em pi2025-1eventpro-production.up.railway.app`);
+  console.log(`Documentação disponível em pi2025-1eventpro-production.up.railway.app/api-docs`);
 });
