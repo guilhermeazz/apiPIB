@@ -152,7 +152,7 @@ router.patch('/:id/cancel', cancelInscription);
 
 /**
  * @swagger
- * /api/inscription/user/{userId}:
+ * /inscription/user/{userId}:
  *   get:
  *     tags: [Inscriptions]
  *     summary: 'Lista inscrições feitas por um usuário'

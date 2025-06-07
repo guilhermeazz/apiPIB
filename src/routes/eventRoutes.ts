@@ -272,7 +272,7 @@ router.post('/validate-exit/:id', validateUserExists, validateExit);
 
 /**
  * @swagger
- * /api/event/created-by/{userId}:
+ * /event/created-by/{userId}:
  *   get:
  *     tags: [Events]
  *     summary: 'Lista eventos criados por um usuário'
