@@ -221,3 +221,84 @@ export const getEventsCreatedByUser = async (req: Request, res: Response): Promi
     }
 };
 
+export const getEventDashboardData = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.params.userId; // O ID do usuário criador virá do parâmetro da URL
+
+        if (!userId) {
+            res.status(400).json({ message: 'ID do usuário criador é obrigatório.' });
+            return;
+        }
+
+        // 1. Encontrar todos os eventos criados por este usuário
+        const createdEvents = await EventModel.find({ userId: userId });
+
+        if (createdEvents.length === 0) {
+            res.status(200).json({ message: 'Nenhum evento encontrado criado por este usuário.', dashboardData: [] });
+            return;
+        }
+
+        const dashboardData = [];
+
+        // 2. Para cada evento, agregar os dados das inscrições
+        for (const event of createdEvents) {
+            const inscriptions = await InscriptionModel.find({ eventId: event._id });
+
+            const totalInscriptions = inscriptions.length;
+            const participating = inscriptions.filter(
+                (i) => i.participation_status === ParticipationStatusEnumerator.PARTICIPANDO
+            ).length;
+            const participated = inscriptions.filter(
+                (i) => i.participation_status === ParticipationStatusEnumerator.PARTICIPADO
+            ).length;
+            const notAttended = inscriptions.filter(
+                (i) => i.participation_status === ParticipationStatusEnumerator.NAO_COMPARECEU
+            ).length;
+            const approved = inscriptions.filter(
+                (i) => i.status === StatusEnumerator.APROVADO
+            ).length;
+            const used = inscriptions.filter(
+                (i) => i.status === StatusEnumerator.USADO
+            ).length;
+            const expired = inscriptions.filter(
+                (i) => i.status === StatusEnumerator.EXPIRADO
+            ).length;
+
+            // Calcular tempo médio de presença
+            let totalDurationMinutes = 0;
+            let validExitsCount = 0;
+            for (const inscr of inscriptions) {
+                if (inscr.checkin?.in && inscr.checkin?.out) {
+                    const durationMs = inscr.checkin.out.getTime() - inscr.checkin.in.getTime();
+                    totalDurationMinutes += durationMs / (1000 * 60); // Converte milissegundos para minutos
+                    validExitsCount++;
+                }
+            }
+            const averageTimeMinutes = validExitsCount > 0 ? totalDurationMinutes / validExitsCount : 0;
+
+            dashboardData.push({
+                eventId: event._id,
+                eventName: event.name,
+                totalInscriptions: totalInscriptions,
+                statusCounts: {
+                    approved: approved,
+                    used: used,
+                    expired: expired,
+                },
+                participationStatusCounts: {
+                    participating: participating,
+                    participated: participated,
+                    notAttended: notAttended,
+                    approved: approved, // 'Aprovado' em participação também significa que está pronto para check-in
+                },
+                averageTimeInMinutes: averageTimeMinutes.toFixed(2), // Duas casas decimais
+            });
+        }
+
+        res.status(200).json({ dashboardData: dashboardData });
+    } catch (error: any) {
+        res.status(500).json({ message: 'Erro ao obter dados da dashboard de eventos', error: error.message });
+    }
+};
+
+

@@ -8,7 +8,8 @@ import {
   deleteEvent,
   validateEntry,
   validateExit,
-  getEventsCreatedByUser
+  getEventsCreatedByUser,
+  getEventDashboardData
 } from '../controllers/EventController';
 import { validateUserExists } from '../middlewares/user/validateUserExist';
 
@@ -299,5 +300,84 @@ router.post('/validate-exit/:id', validateUserExists, validateExit);
  *         description: 'Erro interno do servidor.'
  */
 router.get('/created-by/:userId', validateUserExists, getEventsCreatedByUser);
+
+/**
+ * @swagger
+ * /event/dashboard/{userId}:
+ *   get:
+ *     tags: [Event Dashboard]
+ *     summary: 'Obtém dados de dashboard para eventos criados por um usuário'
+ *     description: 'Retorna métricas agregadas (inscrições, participação, tempo médio) para todos os eventos criados por um usuário específico.'
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 'ID do usuário criador dos eventos.'
+ *     responses:
+ *       200:
+ *         description: 'Dados da dashboard retornados com sucesso.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Nenhum evento encontrado criado por este usuário.'
+ *                 dashboardData:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       eventId:
+ *                         type: string
+ *                         description: 'ID do evento'
+ *                       eventName:
+ *                         type: string
+ *                         description: 'Nome do evento'
+ *                       totalInscriptions:
+ *                         type: number
+ *                         description: 'Número total de inscrições'
+ *                       statusCounts:
+ *                         type: object
+ *                         properties:
+ *                           approved:
+ *                             type: number
+ *                             description: 'Ingressos aprovados'
+ *                           used:
+ *                             type: number
+ *                             description: 'Ingressos usados (check-in)'
+ *                           expired:
+ *                             type: number
+ *                             description: 'Ingressos expirados/cancelados'
+ *                       participationStatusCounts:
+ *                         type: object
+ *                         properties:
+ *                           participating:
+ *                             type: number
+ *                             description: 'Pessoas atualmente participando'
+ *                           participated:
+ *                             type: number
+ *                             description: 'Pessoas que já participaram e saíram'
+ *                           notAttended:
+ *                             type: number
+ *                             description: 'Pessoas que não compareceram'
+ *                           approved:
+ *                             type: number
+ *                             description: 'Pessoas com participação aprovada (aguardando check-in)'
+ *                       averageTimeInMinutes:
+ *                         type: number
+ *                         format: float
+ *                         description: 'Tempo médio de permanência no evento (minutos)'
+ *       400:
+ *         description: 'ID do usuário criador é obrigatório.'
+ *       404:
+ *         description: 'Usuário criador não encontrado.'
+ *       500:
+ *         description: 'Erro interno do servidor.'
+ */
+router.get('/dashboard/:userId', validateUserExists, getEventDashboardData);
 
 export default router;
