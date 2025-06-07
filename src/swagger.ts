@@ -12,7 +12,7 @@ const swaggerDefinition = {
   servers: [
     {
       url: 'pi2025-1eventpro-production.up.railway.app/api',
-      description: 'Servidor de Desenvolvimento Local',
+      description: 'Servidor Hospedado no Railway',
     },
   ],
   components: {
