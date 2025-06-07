@@ -9,7 +9,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "resolveJsonModule": true,
-    "types": ["node", "express", "mongoose", "bcrypt", "qrcode"],
+    "types": ["node", "express", "mongoose", "bcrypt"],
     "sourceMap": true
   },
   "include": ["src/**/*.ts"],
