@@ -203,3 +203,21 @@ export const validateExit = async (req: Request, res: Response): Promise<void> =
         res.status(500).json({ message: 'Erro ao validar saída', error: error.message });
     }
 };
+
+// ✅ NOVA FUNÇÃO: Obter eventos criados por um usuário específico
+export const getEventsCreatedByUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.params.userId; // O ID do usuário criador virá do parâmetro da URL
+
+        if (!userId) {
+            res.status(400).json({ message: 'ID do usuário criador é obrigatório.' });
+            return;
+        }
+
+        const events = await EventModel.find({ userId: userId });
+        res.status(200).json(events);
+    } catch (error: any) {
+        res.status(500).json({ message: 'Erro ao obter eventos criados pelo usuário', error: error.message });
+    }
+};
+

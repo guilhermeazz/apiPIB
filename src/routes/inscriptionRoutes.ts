@@ -4,7 +4,8 @@ import {
   createInscription,
   getInscriptions,
   getInscriptionsById,
-  cancelInscription
+  cancelInscription,
+  getInscriptionsByUser
 } from '../controllers/InscriptionsController';
 import { validateUserExists } from '../middlewares/user/validateUserExist';
 import { validateEventExists } from '../middlewares/event/validateEventExist';
@@ -148,5 +149,35 @@ router.get('/:id', getInscriptionsById);
  *         description: 'Erro interno do servidor.'
  */
 router.patch('/:id/cancel', cancelInscription);
+
+/**
+ * @swagger
+ * /api/inscription/user/{userId}:
+ *   get:
+ *     tags: [Inscriptions]
+ *     summary: 'Lista inscrições feitas por um usuário'
+ *     description: 'Retorna todos os ingressos (inscrições) de um usuário específico.'
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 'ID do usuário.'
+ *     responses:
+ *       200:
+ *         description: 'Lista de inscrições do usuário.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Inscription'
+ *       400:
+ *         description: 'ID do usuário inválido.'
+ *       500:
+ *         description: 'Erro interno do servidor.'
+ */
+router.get('/user/:userId', validateUserExists, getInscriptionsByUser);
 
 export default router;

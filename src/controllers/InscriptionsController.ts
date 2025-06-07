@@ -136,3 +136,21 @@ export const cancelInscription = async (req: Request, res: Response): Promise<vo
         res.status(500).json({ message: 'Erro ao cancelar inscrição', error: error.message });
     }
 };
+
+// ✅ NOVA FUNÇÃO: Obter inscrições de um usuário específico
+export const getInscriptionsByUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.params.userId; // O ID do usuário virá do parâmetro da URL
+
+        if (!userId) {
+            res.status(400).json({ message: 'ID do usuário é obrigatório.' });
+            return;
+        }
+
+        // Buscar inscrições e popular os dados do evento associado para exibir no frontend
+        const inscriptions = await InscriptionModel.find({ userId: userId }).populate("eventId").populate("userId");
+        res.status(200).json(inscriptions);
+    } catch (error: any) {
+        res.status(500).json({ message: 'Erro ao obter inscrições do usuário', error: error.message });
+    }
+};

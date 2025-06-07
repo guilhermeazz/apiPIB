@@ -7,7 +7,8 @@ import {
   updateEvent,
   deleteEvent,
   validateEntry,
-  validateExit
+  validateExit,
+  getEventsCreatedByUser
 } from '../controllers/EventController';
 import { validateUserExists } from '../middlewares/user/validateUserExist';
 
@@ -268,5 +269,35 @@ router.post('/validate-entry/:id', validateUserExists, validateEntry);
  *         description: 'Erro interno do servidor.'
  */
 router.post('/validate-exit/:id', validateUserExists, validateExit);
+
+/**
+ * @swagger
+ * /api/event/created-by/{userId}:
+ *   get:
+ *     tags: [Events]
+ *     summary: 'Lista eventos criados por um usuário'
+ *     description: 'Retorna todos os eventos criados por um usuário específico.'
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 'ID do usuário criador.'
+ *     responses:
+ *       200:
+ *         description: 'Lista de eventos criados pelo usuário.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: 'ID do usuário inválido.'
+ *       500:
+ *         description: 'Erro interno do servidor.'
+ */
+router.get('/created-by/:userId', validateUserExists, getEventsCreatedByUser);
 
 export default router;
