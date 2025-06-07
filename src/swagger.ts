@@ -177,7 +177,7 @@ const swaggerDefinition = {
 
 const swaggerSpec = swaggerJSDoc({
   swaggerDefinition: swaggerDefinition,
-  apis: [path.join(__dirname, 'routes', '*.ts')],
+  apis: [path.join(process.cwd(), 'src', 'routes', '*.ts')],
 });
 
 export default swaggerSpec;
