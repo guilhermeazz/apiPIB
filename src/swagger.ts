@@ -3,21 +3,25 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import path from 'path';
 
 const swaggerDefinition = {
-  openapi: '3.0.0',
-  info: {
-    title: 'EventPro API Simplificada',
-    version: '1.0.0',
-    description: 'Documentação da API simplificada para o EventPro, focada em cadastro/login e gerenciamento básico de eventos, sem autenticação JWT.',
-  },
-  servers: [
+  openapi: '3.0.0',
+  info: {
+    title: 'EventPro API Simplificada',
+    version: '1.0.0',
+    description: 'Documentação da API simplificada para o EventPro, focada em cadastro/login e gerenciamento básico de eventos, sem autenticação JWT.',
+  },
+  servers: [
+    {
+      url: 'https://pi2025-1eventpro-production.up.railway.app/api', // ✅ CORREÇÃO AQUI: Adicione 'https://'
+      description: 'Servidor Hospedado no Railway',
+    },
     {
-      url: 'pi2025-1eventpro-production.up.railway.app/api',
-      description: 'Servidor Hospedado no Railway',
+      url: 'http://localhost:3000/api', // Mantenha para desenvolvimento local
+      description: 'Servidor de Desenvolvimento Local',
     },
-  ],
-  components: {
-    schemas: {
-      User: {
+  ],
+  components: {
+    schemas: {
+      User: {
         type: 'object',
         required: ['name', 'lastname', 'email', 'password', 'dateOfBirth', 'cpf', 'phone'],
         properties: {
@@ -76,7 +80,7 @@ const swaggerDefinition = {
       },
       Inscription: {
         type: 'object',
-        required: ['userId', 'eventId', 'forAnotherOne', 'participants'], // ❌ REMOVIDO 'qrCodeImage'
+        required: ['userId', 'eventId', 'forAnotherOne', 'participants'],
         properties: {
           _id: { type: 'string', readOnly: true, description: 'ID único da inscrição/ingresso' },
           userId: { type: 'string', description: 'ID do usuário que fez a inscrição' },
@@ -94,7 +98,6 @@ const swaggerDefinition = {
           },
           status: { type: 'string', enum: ['APROVADO', 'USADO', 'EXPIRADO'], default: 'APROVADO', description: 'Status do ingresso' },
           participation_status: { type: 'string', enum: ['APROVADO', 'PARTICIPANDO', 'PARTICIPADO', 'NAO_COMPARECEU'], default: 'APROVADO', description: 'Status da participação' },
-          // qrCodeImage: { type: 'string', format: 'base64', description: 'Imagem Base64 do QR Code do ingresso' }, // ❌ REMOVIDO
           checkin: {
             type: 'object',
             properties: {
@@ -174,7 +177,7 @@ const swaggerDefinition = {
 
 const swaggerSpec = swaggerJSDoc({
   swaggerDefinition: swaggerDefinition,
-  apis: [path.join(process.cwd(), 'src', 'routes', '*.ts')],
+  apis: [path.join(__dirname, 'routes', '*.ts')],
 });
 
 export default swaggerSpec;
