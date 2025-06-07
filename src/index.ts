@@ -8,11 +8,15 @@ import eventRoutes from './routes/eventRoutes';
 import inscriptionRoutes from './routes/inscriptionRoutes';
 import swaggerUi from 'swagger-ui-express'; // Importe swaggerUi
 import swaggerSpec from './swagger'; // Importe a especificação do Swagger
+import cors from 'cors'; // Importe cors
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+
 
 app.use(express.json());
 
